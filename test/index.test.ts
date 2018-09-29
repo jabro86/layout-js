@@ -9,6 +9,6 @@ describe("Greeter test", () => {
   });
 
   it('returns "hello bob"', () => {
-    expect(greeter("bob")).toBe("hello bob");
+    expect(greeter("bob")).toBe("hello bob!");
   });
 });
