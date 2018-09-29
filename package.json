@@ -1,18 +1,18 @@
 {
-  "name": "layout-js",
+  "name": "react-iris",
   "version": "0.0.0-development",
   "description": "",
   "keywords": [],
-  "main": "dist/layout-js.umd.js",
-  "module": "dist/layout-js.es5.js",
-  "typings": "dist/types/layout-js.d.ts",
+  "main": "dist/react-iris.umd.js",
+  "module": "dist/react-iris.es5.js",
+  "typings": "dist/types/react-iris.d.ts",
   "files": [
     "dist"
   ],
   "author": "Jan Brockmeyer <jabro@outlook.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jabro86/layout-js.git"
+    "url": "https://github.com/jabro86/react-iris.git"
   },
   "license": "MIT",
   "engines": {

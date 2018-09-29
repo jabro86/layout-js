@@ -1,6 +1,6 @@
-# layout.js
+# react-iris
 
-[![Build Status](https://travis-ci.org/jabro86/layout-js.svg?branch=master)](https://travis-ci.org/jabro86/layout-js) [![Coverage Status](https://coveralls.io/repos/github/jabro86/layout-js/badge.svg?branch=master)](https://coveralls.io/github/jabro86/layout-js?branch=master)
+[![Build Status](https://travis-ci.org/jabro86/react-iris.svg?branch=master)](https://travis-ci.org/jabro86/react-iris) [![Coverage Status](https://coveralls.io/repos/github/jabro86/react-iris/badge.svg?branch=master)](https://coveralls.io/github/jabro86/react-iris?branch=master)
 
 A layout manager written in react.
 
