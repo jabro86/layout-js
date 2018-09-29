@@ -77,8 +77,8 @@
     "collectCoverage": true
   },
   "prettier": {
-    "semi": false,
-    "singleQuote": true
+    "semi": true,
+    "singleQuote": false
   },
   "devDependencies": {
     "@types/jest": "^23.3.2",

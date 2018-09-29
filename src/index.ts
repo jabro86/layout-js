@@ -8,5 +8,5 @@
  * @param name
  */
 export function greeter(name: string): string {
-  return 'hello ' + name
+  return "hello " + name;
 }
