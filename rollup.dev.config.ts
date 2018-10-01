@@ -1,24 +1,18 @@
 import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import sourceMaps from "rollup-plugin-sourcemaps";
-import camelCase from "lodash.camelcase";
 import typescript from "rollup-plugin-typescript2";
 import json from "rollup-plugin-json";
-
-const pkg = require("./package.json");
-
-const libraryName = "react-iris";
+import serve from "rollup-plugin-serve";
+import replace from "rollup-plugin-replace";
 
 export default {
-  input: `src/index.ts`,
-  output: [
-    { file: pkg.main, name: camelCase(libraryName), format: "umd", sourcemap: true },
-    { file: pkg.module, format: "es", sourcemap: true }
-  ],
+  input: `devapp/index.tsx`,
+  output: [{ file: "./build/devapp.bundle.js", format: "es", sourcemap: true }],
   // Indicate here external modules you don't wanna include in your bundle (i.e.: 'lodash')
   external: [],
   watch: {
-    include: "src/**"
+    include: ["src/**", "devapp/**", "style/**"]
   },
   plugins: [
     // Allow json resolution
@@ -38,6 +32,16 @@ export default {
     resolve(),
 
     // Resolve source maps to the original source
-    sourceMaps()
+    sourceMaps(),
+    serve({
+      open: true,
+      contentBase: ["build", "static", "style"],
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
+    }),
+    replace({
+      "process.env.NODE_ENV": JSON.stringify("development")
+    })
   ]
 };
