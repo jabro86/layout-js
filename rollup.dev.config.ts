@@ -7,7 +7,7 @@ import serve from "rollup-plugin-serve";
 import replace from "rollup-plugin-replace";
 
 export default {
-  input: `devapp/index.tsx`,
+  input: `devapp/index.ng.tsx`,
   output: [{ file: "./build/devapp.bundle.js", format: "es", sourcemap: true }],
   // Indicate here external modules you don't wanna include in your bundle (i.e.: 'lodash')
   external: [],
@@ -35,7 +35,7 @@ export default {
     sourceMaps(),
     serve({
       open: true,
-      contentBase: ["build", "static", "style"],
+      contentBase: ["build", "static"],
       headers: {
         "Access-Control-Allow-Origin": "*"
       }

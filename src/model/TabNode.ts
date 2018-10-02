@@ -10,15 +10,10 @@ import { JSMap } from "../Types";
 
 class TabNode extends Node implements IDraggable {
   public static readonly TYPE = "tab";
-  /** @hidden @internal */
   private static _attributeDefinitions: AttributeDefinitions = TabNode._createAttributeDefinitions();
-
-  /** @hidden @internal */
   private _tabRect?: Rect;
-  /** @hidden @internal */
   private _extra: JSMap<any>;
 
-  /** @hidden @internal */
   constructor(model: Model, json: any) {
     super(model);
 
@@ -32,7 +27,6 @@ class TabNode extends Node implements IDraggable {
     return this._tabRect;
   }
 
-  /** @hidden @internal */
   _setTabRect(rect: Rect) {
     this._tabRect = rect;
   }
@@ -88,12 +82,10 @@ class TabNode extends Node implements IDraggable {
     return this._getAttr("renderOnDemand") as boolean;
   }
 
-  /** @hidden @internal */
   _setName(name: string) {
     this._attributes["name"] = name;
   }
 
-  /** @hidden @internal */
   _layout(rect: Rect) {
     if (!rect.equals(this._rect)) {
       this._fireEvent("resize", { rect: rect });
@@ -101,36 +93,30 @@ class TabNode extends Node implements IDraggable {
     this._rect = rect;
   }
 
-  /** @hidden @internal */
   _delete() {
     (this._parent as TabSetNode | BorderNode)._remove(this);
     this._fireEvent("close", {});
   }
 
-  /** @hidden @internal */
   static _fromJson(json: any, model: Model) {
     const newLayoutNode = new TabNode(model, json);
     return newLayoutNode;
   }
 
-  /** @hidden @internal */
   _toJson() {
     const json = {};
     TabNode._attributeDefinitions.toJson(json, this._attributes);
     return json;
   }
 
-  /** @hidden @internal */
   _updateAttrs(json: any) {
     TabNode._attributeDefinitions.update(json, this._attributes);
   }
 
-  /** @hidden @internal */
   _getAttributeDefinitions() {
     return TabNode._attributeDefinitions;
   }
 
-  /** @hidden @internal */
   private static _createAttributeDefinitions(): AttributeDefinitions {
     let attributeDefinitions = new AttributeDefinitions();
     attributeDefinitions.add("type", TabNode.TYPE, true);

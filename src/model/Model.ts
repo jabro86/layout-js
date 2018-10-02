@@ -20,28 +20,26 @@ import IDropTarget from "./IDropTarget";
  * Class containing the Tree of Nodes used by the FlexLayout component
  */
 class Model {
-  /** @hidden @internal */
   private static _attributeDefinitions: AttributeDefinitions = Model._createAttributeDefinitions();
 
-  /** @hidden @internal */
   private _attributes: JSMap<any>;
-  /** @hidden @internal */
+
   private _idMap: JSMap<Node>;
-  /** @hidden @internal */
+
   private _nextId: number;
-  /** @hidden @internal */
+
   private _changeListener?: (() => void);
-  /** @hidden @internal */
+
   private _root?: RowNode;
-  /** @hidden @internal */
+
   private _borders: BorderSet;
-  /** @hidden @internal */
+
   private _onAllowDrop?: (dragNode: Node, dropInfo: DropInfo) => boolean;
-  /** @hidden @internal */
+
   private _maximizedTabSet?: TabSetNode;
-  /** @hidden @internal */
+
   private _activeTabSet?: TabSetNode;
-  /** @hidden @internal */
+
   private _borderRects: { inner: Rect; outer: Rect } = { inner: Rect.empty(), outer: Rect.empty() };
 
   /**
@@ -56,7 +54,6 @@ class Model {
     this._borders = new BorderSet(this);
   }
 
-  /** @hidden @internal */
   _setChangeListener(listener: (() => void) | undefined) {
     this._changeListener = listener;
   }
@@ -68,7 +65,6 @@ class Model {
     return this._activeTabSet;
   }
 
-  /** @hidden @internal */
   _setActiveTabset(tabsetNode: TabSetNode) {
     this._activeTabSet = tabsetNode;
   }
@@ -80,7 +76,6 @@ class Model {
     return this._maximizedTabSet;
   }
 
-  /** @hidden @internal */
   _setMaximizedTabset(tabsetNode: TabSetNode) {
     this._maximizedTabSet = tabsetNode;
   }
@@ -101,7 +96,6 @@ class Model {
     return this._borders;
   }
 
-  /** @hidden @internal */
   _getOuterInnerRects() {
     return this._borderRects;
   }
@@ -260,7 +254,6 @@ class Model {
     }
   }
 
-  /** @hidden @internal */
   _updateIdMap() {
     // regenerate idMap to stop it building up
     this._idMap = {};
@@ -268,7 +261,6 @@ class Model {
     // console.log(JSON.stringify(Object.keys(this._idMap)));
   }
 
-  /** @hidden @internal */
   _adjustSplitSide(node: TabSetNode | RowNode, weight: number, pixels: number) {
     node._setWeight(weight);
     if (node.getWidth() !== undefined && node.getOrientation() === Orientation.VERT) {
@@ -321,7 +313,6 @@ class Model {
     return this._attributes["enableEdgeDock"] as boolean;
   }
 
-  /** @hidden @internal */
   _addNode(node: Node) {
     let id = node.getId();
     if (this._idMap[id] !== undefined) {
@@ -333,7 +324,6 @@ class Model {
     }
   }
 
-  /** @hidden @internal */
   _layout(rect: Rect) {
     // let start = Date.now();
     this._borderRects = this._borders._layoutBorder({ outer: rect, inner: rect });
@@ -344,7 +334,6 @@ class Model {
     // console.log("layout time: " + (Date.now() - start));
   }
 
-  /** @hidden @internal */
   _findDropTargetNode(dragNode: Node & IDraggable, x: number, y: number) {
     let node = (this._root as RowNode)._findDropTargetNode(dragNode, x, y);
     if (node === undefined) {
@@ -353,19 +342,16 @@ class Model {
     return node;
   }
 
-  /** @hidden @internal */
   _tidy() {
     // console.log("before _tidy", this.toString());
     (this._root as RowNode)._tidy();
     // console.log("after _tidy", this.toString());
   }
 
-  /** @hidden @internal */
   _updateAttrs(json: any) {
     Model._attributeDefinitions.update(json, this._attributes);
   }
 
-  /** @hidden @internal */
   _nextUniqueId() {
     this._nextId++;
     while (this._idMap["#" + this._nextId] !== undefined) {
@@ -375,7 +361,6 @@ class Model {
     return "#" + this._nextId;
   }
 
-  /** @hidden @internal */
   _getAttribute(name: string): any {
     return this._attributes[name];
   }
@@ -388,7 +373,6 @@ class Model {
     this._onAllowDrop = onAllowDrop;
   }
 
-  /** @hidden @internal */
   _getOnAllowDrop() {
     return this._onAllowDrop;
   }
@@ -397,7 +381,6 @@ class Model {
     return JSON.stringify(this.toJson());
   }
 
-  /** @hidden @internal */
   private static _createAttributeDefinitions(): AttributeDefinitions {
     let attributeDefinitions = new AttributeDefinitions();
     // splitter
