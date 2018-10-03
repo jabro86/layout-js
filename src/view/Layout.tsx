@@ -107,6 +107,7 @@ export class Layout extends React.Component<ILayoutProps, any> {
 
   updateRect() {
     const domRect = (this.selfRef as HTMLDivElement).getBoundingClientRect();
+    console.log("domRect", domRect);
     const rect = new Rect(0, 0, domRect.width, domRect.height);
     if (!rect.equals(this.rect)) {
       this.rect = rect;

@@ -1,6 +1,8 @@
 import * as React from "react";
 import styled from "react-emotion";
 
+import { Rect, toStyle } from "./Rect";
+
 const OuterDiv = styled("div")`
   overflow: hidden;
   background-color: #222;
@@ -41,9 +43,16 @@ const TabSetHeaderInner = styled("div")`
   width: 10000px;
 `;
 
-export function TabSet(props: { id: number }): JSX.Element {
+interface Props {
+  id: number;
+  rect: Rect;
+}
+
+export function TabSet(props: Props): JSX.Element {
+  const style = toStyle(props.rect);
+
   return (
-    <OuterDiv>
+    <OuterDiv style={style}>
       <TabSetHeader>
         {`TabSet ${props.id}`}
         <TabSetHeaderOuter tabStripHeight={30} headerHeight={30}>

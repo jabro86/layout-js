@@ -1,63 +1,93 @@
 import * as React from "react";
-import styled from "react-emotion";
 
+import { Model, RowNode, TabSetNode } from "./Model";
+import { Rect } from "./Rect";
 import { TabSet } from "./TabSet";
-
-const Container = styled("div")`
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  position: absolute;
-  overflow: hidden;
-`;
 
 interface Props {
   model: Model;
 }
 
-interface TabNode {
-  type: "tab";
-  name: string;
-  component: string;
+interface State {
+  rect: Rect;
 }
 
-interface TabSetNode {
-  type: "tabset";
-  weight: number;
-  selected: number;
-  children: Array<TabNode>;
+export class Layout extends React.Component<Props, State> {
+  private ref: React.RefObject<HTMLDivElement>;
+
+  constructor(props: Props) {
+    super(props);
+    this.ref = React.createRef<HTMLDivElement>();
+    this.state = {
+      rect: { x: 0, y: 0, width: 0, height: 0 }
+    };
+  }
+
+  componentDidMount = () => {
+    if (this.ref.current) {
+      const { width, height } = this.ref.current.getBoundingClientRect();
+      const rect: Rect = {
+        x: 0,
+        y: 0,
+        width,
+        height
+      };
+      this.setState({ rect });
+    }
+  };
+
+  render() {
+    return (
+      // FIXME: cannot use styled element with ref
+      // maybe forwardRef solves the issue
+      <div
+        ref={this.ref}
+        style={{
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          position: "absolute",
+          overflow: "hidden"
+        }}
+      >
+        {renderChildren(this.props.model, this.state.rect)}
+      </div>
+    );
+  }
 }
 
-interface RowNode {
-  type: "row";
-  weight: number;
-  children: Array<TabSetNode | TabNode>;
-}
+function renderChildren(model: Model, parentRect: Rect): JSX.Element[] {
+  const { children } = model.layout;
+  const totalWeight = calcTotalWeight(children);
+  let p = 0;
+  return children.map((child, i) => {
+    let currentWidth = 0;
+    if (totalWeight !== 0) {
+      currentWidth = Math.floor(parentRect.width * (child.weight / totalWeight));
+    }
 
-interface Model {
-  global: any;
-  layout: RowNode;
-}
+    // TODO: think about adjusting sizes to exactly fit the screen
+    // e.g. if totalSizeGiven < pixelSize (= parentRect.width)
 
-export function Layout(props: Props): JSX.Element {
-  const { model } = props;
+    const rect: Rect = {
+      x: parentRect.x + p,
+      y: parentRect.y,
+      width: currentWidth,
+      height: parentRect.height
+    };
 
-  return <Container>{renderChildren(model)}</Container>;
-}
+    p += currentWidth;
 
-function Tab(props: { name: string }): JSX.Element {
-  return <h1>{`Tab "${props.name}"`}</h1>;
-}
-
-function renderChildren(model: Model): JSX.Element[] {
-  const root = model.layout;
-  return root.children.map((child, i) => {
     switch (child.type) {
-      case "tab":
-        return <Tab key={`tab-${i}`} name={child.name} />;
+      case "row":
+        return <h1>Row</h1>;
       case "tabset":
-        return <TabSet key={`tabset-${i}`} id={i} />;
+        return <TabSet key={`tabset-${i}`} id={i} rect={rect} />;
     }
   });
+}
+
+function calcTotalWeight(nodes: (TabSetNode | RowNode)[]): number {
+  return nodes.reduce((totalWeight, node) => (totalWeight += node.weight), 0);
 }

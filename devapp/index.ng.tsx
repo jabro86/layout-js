@@ -11,7 +11,7 @@ const json: any = {
     children: [
       {
         type: "tabset",
-        weight: 50,
+        weight: 25,
         selected: 0,
         children: [
           {
@@ -23,7 +23,7 @@ const json: any = {
       },
       {
         type: "tabset",
-        weight: 50,
+        weight: 25,
         selected: 0,
         children: [
           {
