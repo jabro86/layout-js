@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 
 import { Layout } from "../src/ng";
 
-const json = {
+const json: any = {
   global: {},
   layout: {
     type: "row",

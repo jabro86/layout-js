@@ -56,7 +56,7 @@ export class TabSet extends React.Component<ITabSetProps, any> {
                 const child = node.getChildren()[i] as TabNode;
                 if (child.getTabRect()!.getRight() > node.getRect().getRight() - (20 + toolbarWidth)) {
                     hideTabsAfter = Math.max(0, i - 1);
-                    //console.log("tabs truncated to:" + hideTabsAfter);
+                    // console.log("tabs truncated to:" + hideTabsAfter);
                     this.showOverflow = node.getChildren().length > 1;
 
                     if (i === 0) {
@@ -111,7 +111,7 @@ export class TabSet extends React.Component<ITabSetProps, any> {
                 }
             }
         }
-        //tabs.forEach(c => console.log(c.key));
+        // tabs.forEach(c => console.log(c.key));
 
         let buttons: Array<any> = [];
 
@@ -201,7 +201,7 @@ export class TabSet extends React.Component<ITabSetProps, any> {
     }
 
     onOverflowClick(hiddenTabs: Array<{ name: string, node: TabNode, index: number }>, event: React.MouseEvent<HTMLDivElement>) {
-        //console.log("hidden tabs: " + hiddenTabs);
+        // console.log("hidden tabs: " + hiddenTabs);
         const element = this.overflowbuttonRef as Element;
         PopupMenu.show(element, hiddenTabs, this.onOverflowItemSelect.bind(this));
     }
