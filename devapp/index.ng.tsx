@@ -2,31 +2,42 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { Layout } from "../src/ng";
+import { Model } from "../src/ng/Model";
 
-const json: any = {
+const json: Model = {
   global: {},
   layout: {
     type: "row",
     weight: 100,
     children: [
       {
+        id: "1",
         type: "tabset",
         weight: 25,
         selected: 0,
         children: [
           {
+            id: "1",
             type: "tab",
             name: "Things to try",
+            component: "text"
+          },
+          {
+            id: "2",
+            type: "tab",
+            name: "Another thing",
             component: "text"
           }
         ]
       },
       {
+        id: "2",
         type: "tabset",
         weight: 25,
         selected: 0,
         children: [
           {
+            id: "3",
             type: "tab",
             name: "two",
             component: "text"
@@ -34,11 +45,13 @@ const json: any = {
         ]
       },
       {
+        id: "3",
         type: "tabset",
         weight: 50,
         selected: 0,
         children: [
           {
+            id: "4",
             type: "tab",
             name: "three",
             component: "text"

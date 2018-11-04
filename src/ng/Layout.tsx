@@ -10,6 +10,8 @@ interface Props {
 
 interface State {
   rect: Rect;
+  model: Model;
+  activeTabSet: TabSetNode | undefined;
 }
 
 export class Layout extends React.Component<Props, State> {
@@ -19,7 +21,9 @@ export class Layout extends React.Component<Props, State> {
     super(props);
     this.ref = React.createRef<HTMLDivElement>();
     this.state = {
-      rect: { x: 0, y: 0, width: 0, height: 0 }
+      rect: { x: 0, y: 0, width: 0, height: 0 },
+      model: props.model,
+      activeTabSet: undefined
     };
   }
 
@@ -51,41 +55,69 @@ export class Layout extends React.Component<Props, State> {
           overflow: "hidden"
         }}
       >
-        {renderChildren(this.props.model, this.state.rect)}
+        {this.renderChildren()}
       </div>
     );
   }
-}
 
-function renderChildren(model: Model, parentRect: Rect): JSX.Element[] {
-  const { children } = model.layout;
-  const totalWeight = calcTotalWeight(children);
-  let p = 0;
-  return children.map((child, i) => {
-    let currentWidth = 0;
-    if (totalWeight !== 0) {
-      currentWidth = Math.floor(parentRect.width * (child.weight / totalWeight));
-    }
+  renderChildren = () => {
+    const { children } = this.props.model.layout;
+    const totalWeight = calcTotalWeight(children);
+    let p = 0;
+    return children.map((child, i) => {
+      let currentWidth = 0;
+      if (totalWeight !== 0) {
+        currentWidth = Math.floor(this.state.rect.width * (child.weight / totalWeight));
+      }
 
-    // TODO: think about adjusting sizes to exactly fit the screen
-    // e.g. if totalSizeGiven < pixelSize (= parentRect.width)
+      // TODO: think about adjusting sizes to exactly fit the screen
+      // e.g. if totalSizeGiven < pixelSize (= parentRect.width)
 
-    const rect: Rect = {
-      x: parentRect.x + p,
-      y: parentRect.y,
-      width: currentWidth,
-      height: parentRect.height
-    };
+      const rect: Rect = {
+        x: this.state.rect.x + p,
+        y: this.state.rect.y,
+        width: currentWidth,
+        height: this.state.rect.height
+      };
 
-    p += currentWidth;
+      p += currentWidth;
 
-    switch (child.type) {
-      case "row":
-        return <h1>Row</h1>;
-      case "tabset":
-        return <TabSet key={`tabset-${i}`} id={i} rect={rect} />;
-    }
-  });
+      switch (child.type) {
+        case "row":
+          return <h1>Row</h1>;
+        case "tabset":
+          return (
+            <TabSet
+              key={`tabset-${i}`}
+              id={i}
+              rect={rect}
+              selected={child.selected}
+              isActive={this.state.activeTabSet && this.state.activeTabSet.id === child.id}
+              onTabButtonClicked={this.handleTabButtonClicked}
+            >
+              {child.children}
+            </TabSet>
+          );
+      }
+    });
+  };
+
+  handleTabButtonClicked = (id: string): void => {
+    const newModel = { ...this.state.model };
+    newModel.layout.children.forEach(child => {
+      if (child.type === "tabset") {
+        let idx = child.selected;
+        child.children.forEach((tab, i) => {
+          if (tab.id === id) {
+            idx = i;
+            this.setState({ activeTabSet: child });
+          }
+        });
+        child.selected = idx;
+      }
+    });
+    this.setState({ model: newModel });
+  };
 }
 
 function calcTotalWeight(nodes: (TabSetNode | RowNode)[]): number {

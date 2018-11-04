@@ -1,10 +1,12 @@
 export interface TabNode {
+  id: string;
   type: "tab";
   name: string;
   component: string;
 }
 
 export interface TabSetNode {
+  id: string;
   type: "tabset";
   weight: number;
   selected: number;

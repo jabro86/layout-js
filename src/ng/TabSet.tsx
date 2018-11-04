@@ -2,40 +2,30 @@ import * as React from "react";
 import styled from "react-emotion";
 
 import { Rect, toStyle } from "./Rect";
+import { TabNode } from "./Model";
+import { TabButton } from "./TabButton";
 
-const OuterDiv = styled("div")`
+const Container = styled("div")`
   overflow: hidden;
   background-color: #222;
   box-sizing: border-box;
 `;
 
-const TabSetHeader = styled("div")`
-  position: absolute;
-  left: 0;
-  right: 0;
-  color: #eee;
-  background-color: #212121;
-  padding: 3px 3px 3px 5px;
-  /*box-shadow: inset 0px 0px 3px 0px rgba(136, 136, 136, 0.54);*/
-  box-sizing: border-box;
-`;
-
-interface TabSetHeaderOuterProps {
-  tabStripHeight: number;
-  headerHeight: number;
+interface OuterHeaderProps {
+  selected: boolean;
 }
 
-const TabSetHeaderOuter = styled("div")`
+const OuterHeader = styled("div")`
   background-color: black;
   position: absolute;
   left: 0;
   right: 0;
   overflow: hidden;
-  height: ${(props: TabSetHeaderOuterProps) => props.tabStripHeight}px
-  top: ${(props: TabSetHeaderOuterProps) => props.headerHeight}px
+  background-image: ${(props: OuterHeaderProps) =>
+    props.selected ? "linear-gradient(#111, #444)" : undefined};
 `;
 
-const TabSetHeaderInner = styled("div")`
+const InnerHeader = styled("div")`
   position: absolute;
   left: 0;
   top: 0;
@@ -43,22 +33,47 @@ const TabSetHeaderInner = styled("div")`
   width: 10000px;
 `;
 
-interface Props {
+interface PropsType {
   id: number;
   rect: Rect;
+  children: TabNode[];
+  selected: number;
+  isActive?: boolean;
+  onTabButtonClicked(id: string): void;
 }
 
-export function TabSet(props: Props): JSX.Element {
-  const style = toStyle(props.rect);
+export class TabSet extends React.Component<PropsType> {
+  handleOnTabButtonClicked = (id: string) => {
+    this.props.onTabButtonClicked(id);
+  };
 
-  return (
-    <OuterDiv style={style}>
-      <TabSetHeader>
-        {`TabSet ${props.id}`}
-        <TabSetHeaderOuter tabStripHeight={30} headerHeight={30}>
-          <TabSetHeaderInner>{`tab`}</TabSetHeaderInner>
-        </TabSetHeaderOuter>
-      </TabSetHeader>
-    </OuterDiv>
-  );
+  render() {
+    const style = toStyle(this.props.rect);
+    const tabStripHeight = 30;
+
+    const tabs = this.props.children.map((tabNode, i) => {
+      const isSelected = this.props.selected === i;
+      return (
+        <TabButton
+          key={`${tabNode.name}-${i}`}
+          node={tabNode}
+          height={tabStripHeight}
+          show={true}
+          selected={isSelected}
+          onTabButtonClicked={this.handleOnTabButtonClicked}
+        />
+      );
+    });
+
+    return (
+      <Container style={style}>
+        <OuterHeader
+          selected={this.props.isActive || false}
+          style={{ height: `${tabStripHeight}px` }}
+        >
+          <InnerHeader>{tabs}</InnerHeader>
+        </OuterHeader>
+      </Container>
+    );
+  }
 }
