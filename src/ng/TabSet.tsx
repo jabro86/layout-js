@@ -43,10 +43,6 @@ interface PropsType {
 }
 
 export class TabSet extends React.Component<PropsType> {
-  handleOnTabButtonClicked = (id: string) => {
-    this.props.onTabButtonClicked(id);
-  };
-
   render() {
     const style = toStyle(this.props.rect);
     const tabStripHeight = 30;
@@ -60,7 +56,7 @@ export class TabSet extends React.Component<PropsType> {
           height={tabStripHeight}
           show={true}
           selected={isSelected}
-          onTabButtonClicked={this.handleOnTabButtonClicked}
+          onTabButtonClicked={this.props.onTabButtonClicked}
         />
       );
     });
