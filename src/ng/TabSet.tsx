@@ -37,7 +37,7 @@ interface PropsType {
   id: number;
   rect: Rect;
   children: TabNode[];
-  selected: number;
+  selected: string;
   isActive?: boolean;
   onTabButtonClicked(id: string): void;
 }
@@ -51,11 +51,11 @@ export class TabSet extends React.Component<PropsType> {
     const style = toStyle(this.props.rect);
     const tabStripHeight = 30;
 
-    const tabs = this.props.children.map((tabNode, i) => {
-      const isSelected = this.props.selected === i;
+    const tabs = this.props.children.map(tabNode => {
+      const isSelected = this.props.selected === tabNode.id;
       return (
         <TabButton
-          key={`${tabNode.name}-${i}`}
+          key={`${tabNode.id}`}
           node={tabNode}
           height={tabStripHeight}
           show={true}

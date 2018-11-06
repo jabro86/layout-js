@@ -3,6 +3,7 @@ import * as React from "react";
 import { Model, RowNode, TabSetNode } from "./Model";
 import { Rect } from "./Rect";
 import { TabSet } from "./TabSet";
+import { FlatDataNode, getFlatDataFromTree, getTreeFromFlatData } from "./utils";
 
 interface Props {
   model: Model;
@@ -10,7 +11,7 @@ interface Props {
 
 interface State {
   rect: Rect;
-  model: Model;
+  nodes: FlatDataNode[];
   activeTabSet: TabSetNode | undefined;
 }
 
@@ -20,9 +21,16 @@ export class Layout extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.ref = React.createRef<HTMLDivElement>();
+
+    const nodes = getFlatDataFromTree({
+      treeData: [props.model.layout],
+      getNodeKey: ({ node }) => node.id,
+      ignoreCollapsed: false
+    });
+
     this.state = {
       rect: { x: 0, y: 0, width: 0, height: 0 },
-      model: props.model,
+      nodes,
       activeTabSet: undefined
     };
   }
@@ -61,18 +69,33 @@ export class Layout extends React.Component<Props, State> {
   }
 
   renderChildren = () => {
-    const { children } = this.props.model.layout;
-    const totalWeight = calcTotalWeight(children);
+    const rootNode = getTreeFromFlatData({
+      flatData: this.state.nodes,
+      getKey: (node: FlatDataNode) => {
+        return node.node.id;
+      },
+      getParentKey: (node: FlatDataNode) => {
+        if (node.parentNode) {
+          return node.parentNode.id;
+        }
+        return "root";
+      },
+      rootKey: "root"
+    })[0];
+
+    const { children } = rootNode;
+    const nodes = children.map(child => child.node);
+    const totalWeight = calcTotalWeight(nodes);
     let p = 0;
     return children.map((child, i) => {
+      const nodeValue = child.node;
       let currentWidth = 0;
       if (totalWeight !== 0) {
-        currentWidth = Math.floor(this.state.rect.width * (child.weight / totalWeight));
+        currentWidth = Math.floor(this.state.rect.width * (nodeValue.weight / totalWeight));
       }
 
       // TODO: think about adjusting sizes to exactly fit the screen
       // e.g. if totalSizeGiven < pixelSize (= parentRect.width)
-
       const rect: Rect = {
         x: this.state.rect.x + p,
         y: this.state.rect.y,
@@ -82,7 +105,7 @@ export class Layout extends React.Component<Props, State> {
 
       p += currentWidth;
 
-      switch (child.type) {
+      switch (nodeValue.type) {
         case "row":
           return <h1>Row</h1>;
         case "tabset":
@@ -91,11 +114,11 @@ export class Layout extends React.Component<Props, State> {
               key={`tabset-${i}`}
               id={i}
               rect={rect}
-              selected={child.selected}
-              isActive={this.state.activeTabSet && this.state.activeTabSet.id === child.id}
+              selected={nodeValue.selected}
+              isActive={this.state.activeTabSet && this.state.activeTabSet.id === nodeValue.id}
               onTabButtonClicked={this.handleTabButtonClicked}
             >
-              {child.children}
+              {nodeValue.children}
             </TabSet>
           );
       }
@@ -103,20 +126,23 @@ export class Layout extends React.Component<Props, State> {
   };
 
   handleTabButtonClicked = (id: string): void => {
-    const newModel = { ...this.state.model };
-    newModel.layout.children.forEach(child => {
-      if (child.type === "tabset") {
-        let idx = child.selected;
-        child.children.forEach((tab, i) => {
-          if (tab.id === id) {
-            idx = i;
-            this.setState({ activeTabSet: child });
-          }
-        });
-        child.selected = idx;
+    const currentTab = this.state.nodes.find(node => node.node.id === id);
+    if (currentTab) {
+      const { parentNode: activeTabSet } = currentTab;
+      if (activeTabSet === undefined || activeTabSet.type !== "tabset") {
+        throw Error(`No parent not found for ${id}!`);
       }
-    });
-    this.setState({ model: newModel });
+      const nodes = this.state.nodes.map(node => {
+        if (node.node.id === activeTabSet.id) {
+          if (node.node.type !== "tabset") {
+            throw Error(`Node ${node.node.id} not a tabset!`);
+          }
+          node.node.selected = id;
+        }
+        return node;
+      });
+      this.setState({ activeTabSet, nodes });
+    }
   };
 }
 

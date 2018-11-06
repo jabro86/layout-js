@@ -3,17 +3,19 @@ export interface TabNode {
   type: "tab";
   name: string;
   component: string;
+  expanded?: boolean;
 }
 
 export interface TabSetNode {
   id: string;
   type: "tabset";
   weight: number;
-  selected: number;
+  selected: string;
   children: Array<TabNode>;
 }
 
 export interface RowNode {
+  id: string;
   type: "row";
   weight: number;
   children: Array<RowNode | TabSetNode>;

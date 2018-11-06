@@ -7,23 +7,24 @@ import { Model } from "../src/ng/Model";
 const json: Model = {
   global: {},
   layout: {
+    id: "row-1",
     type: "row",
     weight: 100,
     children: [
       {
-        id: "1",
+        id: "tabset-1",
         type: "tabset",
         weight: 25,
-        selected: 0,
+        selected: "tab-1",
         children: [
           {
-            id: "1",
+            id: "tab-1",
             type: "tab",
             name: "Things to try",
             component: "text"
           },
           {
-            id: "2",
+            id: "tab-2",
             type: "tab",
             name: "Another thing",
             component: "text"
@@ -31,13 +32,13 @@ const json: Model = {
         ]
       },
       {
-        id: "2",
+        id: "tabset-2",
         type: "tabset",
         weight: 25,
-        selected: 0,
+        selected: "tab-3",
         children: [
           {
-            id: "3",
+            id: "tab-3",
             type: "tab",
             name: "two",
             component: "text"
@@ -45,13 +46,13 @@ const json: Model = {
         ]
       },
       {
-        id: "3",
+        id: "tabset-3",
         type: "tabset",
         weight: 50,
-        selected: 0,
+        selected: "tab-4",
         children: [
           {
-            id: "4",
+            id: "tab-4",
             type: "tab",
             name: "three",
             component: "text"
